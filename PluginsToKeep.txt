@@ -1,0 +1,12 @@
+UAD UA 1176LN Legacy.dll
+UAD UA 1176SE Legacy.dll
+UAD Cambridge.dll
+UAD EMT 140.dll
+UAD Fairchild 670 Legacy.dll
+UAD Precision Limiter.dll
+UAD Pultec EQP-1A Legacy.dll
+UAD Pultec-Pro Legacy.dll
+UAD RealVerb-Pro.dll
+UAD SSL E Channel Strip Legacy.dll
+UAD SSL G Bus Compressor Legacy.dll
+UAD Teletronix LA-2A Legacy.dll
