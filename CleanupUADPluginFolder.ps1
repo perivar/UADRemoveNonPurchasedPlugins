@@ -1,3 +1,10 @@
+#Elevate to administrator
+if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
+{  
+  $arguments = "& '" +$myinvocation.mycommand.definition + "'"
+  Start-Process powershell -Verb runAs -ArgumentList $arguments
+  Break
+}
 
 $sourceDirectoryx64 = "C:\Program Files\Steinberg\VSTPlugins\Powered Plugins"
 $destinationDirectoryx64 = "C:\Program Files\Steinberg\VSTPlugins-Disabled\Powered Plugins"
@@ -5,7 +12,10 @@ $destinationDirectoryx64 = "C:\Program Files\Steinberg\VSTPlugins-Disabled\Power
 $sourceDirectoryx86 = "C:\Program Files (x86)\Steinberg\VSTPlugins\Powered Plugins"
 $destinationDirectoryx86 = "C:\Program Files (x86)\Steinberg\VSTPlugins-Disabled\Powered Plugins"
 
-$fileExcludeList = Get-Content "PluginsToKeep.txt"
+#Make sure we can find the exclude file
+$fileExcludeListName = "PluginsToKeep.txt"
+$fileExcludeListPath = Join-Path $PSScriptRoot $fileExcludeListName
+$fileExcludeList = Get-Content $fileExcludeListPath
 
 function MoveFilesExceptRecursively ($sourceDirectory, $destinationDirectory, $fileExcludeList) {
     #Create destinationDirectory if not exists
@@ -17,13 +27,17 @@ function MoveFilesExceptRecursively ($sourceDirectory, $destinationDirectory, $f
     #region move files (does not support recursive folders)
     # Get-ChildItem $sourceDirectory -File | 
     # Where-Object { $_.Name -notin $fileExcludeList } | 
+	# To debug do a foreach on the list and output the filename
+    #ForEach-Object {Write-Host $_.FullName}
+    # Move file and force (overwrite if already exist) 
     # Move-Item -Destination $destinationDirectory -Force
     #engregion
 
     #region move files (does support recursive folders)
+	#Move file and force (overwrite if already exist) 
     Get-ChildItem $sourceDirectory -Recurse -Exclude $fileExcludeList | 
-    Move-Item -Destination { Join-Path $destinationDirectory $_.FullName.Substring($sourceDirectory.length) }
-    #engregion
+    Move-Item -Destination { Join-Path $destinationDirectory $_.FullName.Substring($sourceDirectory.length) } -Force
+    #endregion
 }
 
 Write-Host "Cleaning up $sourceDirectoryx64"
